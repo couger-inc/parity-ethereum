@@ -1,0 +1,19 @@
+sudo: required
+
+services:
+  - docker
+
+env:
+  global:
+    - IMAGE_NAME=parity-ethereum
+
+before_script:
+
+script:
+  - docker_tag=${TRAVIS_BRANCH//\//-}
+  - docker build -t "couger/${IMAGE_NAME}:${docker_tag}" -f scripts/docker/centos-cytoplasm-ss/Dockerfile .
+
+after_script:
+  - docker images
+  - docker login -u "${DOCKERHUB_USER}" -p "${DOCKERHUB_PASS}"
+  - docker push "couger/${IMAGE_NAME}:${docker_tag}"
